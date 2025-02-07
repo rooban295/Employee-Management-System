@@ -26,11 +26,11 @@ export const Nav = () => {
     <div className="collapse navbar-collapse" id="navbarSupportedContent">
       <ul className="navbar-nav me-auto mb-2 mb-lg-0">
         <li className="nav-item">
-        <button type="button" className="border-0 form-control" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Add Employee</button>
+        <button type="button" className="btn form-control" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Add Employee</button>
         </li>
       </ul>
       <form className="d-flex">
-        <input className="form-control me-2" type="text" placeholder="Search" aria-label="Search" value={search} style={{width:"350px"}} onChange={handelSearchInput}/>
+        <input className="form-control me-2" type="text" placeholder="Search" aria-label="Search" value={search} style={{width:"300px"}} onChange={handelSearchInput}/>
       </form>
     </div>
   </div>
