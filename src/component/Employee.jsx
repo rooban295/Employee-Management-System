@@ -118,7 +118,7 @@ export const Employee = () => {
   }
 
   return (
-    <div>
+    <div className='mx-4'>
     <div className="container mt-5">
 
   <div className="row g-5">
