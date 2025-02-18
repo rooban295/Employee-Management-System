@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { CiEdit } from "react-icons/ci";
 import { MdOutlineDelete } from "react-icons/md";
 import { useSelector } from 'react-redux';
+import { Flip, ToastContainer, Zoom, toast } from 'react-toastify';
+import { ImLocation } from "react-icons/im";
+import { MdOutlineMarkEmailRead } from "react-icons/md";
 
 export const Employee = () => {
 
@@ -54,6 +57,7 @@ export const Employee = () => {
     
     axios.put(`https://67a4618231d0d3a6b7862340.mockapi.io/employee/${emp.id}`,emp)
     .then((res)=>{
+     toast.success("Employee Updated Successfully")
      fetchEmployee()
     })
     .catch((err)=>{
@@ -64,6 +68,7 @@ export const Employee = () => {
   const deletetEmployee=(id)=>{
     axios.delete(`https://67a4618231d0d3a6b7862340.mockapi.io/employee/${id}`)
     .then((res)=>{
+      toast.success("Employee Deleted successfully")
       fetchEmployee()
         })
     .catch((err)=>{
@@ -96,13 +101,9 @@ export const Employee = () => {
   const addEmployee=(emp)=>{
     axios.post(`https://67a4618231d0d3a6b7862340.mockapi.io/employee/`,emp)
     .then((res)=>{
-      setEmpAdd({employeeName:'',
-        employeeEmail:'',
-        role:'',
-        employeeAddress:'',
-        profileImage:'',
-        profileImage:''})
+      toast.success("Employee Added Successfully")
       fetchEmployee()
+      setEmpAdd({})
     })
     .catch((err)=>{
       console.log(err);  
@@ -113,19 +114,29 @@ export const Employee = () => {
     setEmpAdd({...empAdd,[name]:value});
   }
 
-  const handelAddButton=()=>{
+  const handelAddButton=(e)=>{
+    e.preventDefault();  
     addEmployee(empAdd);
   }
 
+
   return (
     <div className='mx-4'>
+    <ToastContainer position='top-center' hideProgressBar={true} autoClose={2000} closeButton={false}/>
     <div className="container mt-5">
 
   <div className="row g-5">
 
       {
-      employee.filter((emp)=>emp.employeeName.startsWith(searchResult)||emp.employeeName.startsWith(searchResult.toUpperCase())||emp.role.startsWith(searchResult)).map((emp,index)=>(
-      <div className="col-sm-6 col-md-4 col-lg-3 col-lg-3 p-2 " key={index}> 
+      employee.filter((emp) => 
+        emp.employeeName.toLowerCase().startsWith(searchResult.toLowerCase())
+      ||emp.employeeName.startsWith(searchResult.toUpperCase())
+      ||emp.role.toLowerCase().startsWith(searchResult.toLowerCase())
+      ||emp.role.startsWith(searchResult.toUpperCase())
+      ||emp.employeeAddress.toLowerCase().startsWith(searchResult.toLowerCase())
+      ||emp.employeeAddress.startsWith(searchResult.toUpperCase())
+    ).map((emp,index)=>(
+      <div className="col-sm-6 col-md-4 col-lg-3 col-lg-3 p-2 shadow-xl" key={index}> 
       <div className="card p-2 pt-3">
       <div className='d-flex gap-3'>
       <img src={emp.profileImage} style={{ height: '60px', width: '60px' }} className="card-img-top rounded-circle" alt="..."/>
@@ -135,8 +146,8 @@ export const Employee = () => {
       </div>
       </div>
       <div className="card-body">
-        <h5 className="card-title fs-6">{emp.employeeEmail}</h5>
-        <h5 className="card-title fs-6">{emp.employeeAddress}</h5>
+        <div className='mb-2 d-flex gap-2'><MdOutlineMarkEmailRead className='d-inline'/><h5 className="card-title fs-6 d-inline"> {emp.employeeEmail}</h5></div>
+        <div className='d-flex gap-2'><ImLocation className='d-inline'/><p className="card-title fs-6 d-inline">{emp.employeeAddress}</p></div>
         <div className='d-flex gap-2 flex-end justify-content-end'>
         <button onClick={()=>handelUpdate(emp.id)}  type="button" className="btn btn-primary p-1"  data-bs-toggle="modal" data-bs-target="#exampleModal2" data-bs-whatever="@mdo"><CiEdit /></button>
         <button onClick={()=>handelDelete(emp.id)} type="button" className="btn btn-danger p-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><MdOutlineDelete /></button>
@@ -203,7 +214,7 @@ export const Employee = () => {
 
 
 {/* Delete popup */}
-<div className="modal fade mt-2" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div className="modal fade mt-2" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div className="modal-dialog">
     <div className="modal-content">
       <div className="modal-header">
@@ -235,37 +246,38 @@ export const Employee = () => {
       
       <div className="modal-body">
         
-      <form className=''>
+      <form className='' onSubmit={handelAddButton}>
           <div className="mb-0">
             <label className="col-form-label">Employee Name:</label>
-            <input type="text" className="form-control" value={empAdd.employeeName} name='employeeName' onChange={handleAddEvent} />
+            <input type="text" required className="form-control" value={empAdd.employeeName} name='employeeName' onChange={handleAddEvent}  />
           </div>
 
           <div className="mb-1">
             <label  className="col-form-label">EmployeeEmail</label>
-            <input type="text" className="form-control" value={empAdd.employeeEmail} name='employeeEmail' onChange={handleAddEvent}/>
+            <input type="text" className="form-control" value={empAdd.employeeEmail} name='employeeEmail' onChange={handleAddEvent} required/>
           </div>
 
           <div className="mb-1">
             <label  className="col-form-label">Employee Role</label>
-            <input type="text" className="form-control"name='role' value={empAdd.role} onChange={handleAddEvent}/>
+            <input type="text" className="form-control"name='role' value={empAdd.role} onChange={handleAddEvent} required/>
           </div>
 
           <div className="mb-1">
             <label  className="col-form-label">Employee Address</label>
-            <textarea className="form-control" name='employeeAddress' value={empAdd.employeeAddress} onChange={handleAddEvent}></textarea>
+            <textarea className="form-control" name='employeeAddress' value={empAdd.employeeAddress} onChange={handleAddEvent} required></textarea>
           </div>
 
           <div className="mb-1">
             <label  className="col-form-label">profile Image</label>
-            <textarea className="form-control" name='profileImage' value={empAdd.profileImage} onChange={handleAddEvent}></textarea>
+            <textarea className="form-control" name='profileImage' value={empAdd.profileImage} onChange={handleAddEvent} required></textarea>
           </div>
+
+          <button type="submit" data-bs-dismiss="modal"  className="btn btn-primary">Add</button>
         </form>
       </div>
 
       <div className="modal-footer">
-        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" onClick={()=>handelAddButton()} data-bs-dismiss="modal"  className="btn btn-primary">Add</button>
+        {/* <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button> */}
       </div>
 
     </div>
