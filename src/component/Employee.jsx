@@ -6,9 +6,21 @@ import { useSelector } from 'react-redux';
 import { Flip, ToastContainer, Zoom, toast } from 'react-toastify';
 import { ImLocation } from "react-icons/im";
 import { MdOutlineMarkEmailRead } from "react-icons/md";
-
+import { DatePicker } from 'antd';
+import { Alert, Form, Input } from 'antd';
+import { message } from "antd"
+// import { Button, message, Space } from 'antd';
+;
 export const Employee = () => {
 
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const success = (type,msg) => {
+    messageApi.open({
+      type: type,
+      content: msg,
+    });
+  };
   const searchResult=useSelector((state)=>state.search.searchKeyword);
  
   const[employee,setEmployee]=useState([]);
@@ -57,7 +69,8 @@ export const Employee = () => {
     
     axios.put(`https://67a4618231d0d3a6b7862340.mockapi.io/employee/${emp.id}`,emp)
     .then((res)=>{
-     toast.success("Employee Updated Successfully")
+    //  toast.success("Employee Updated Successfully")
+     success('success','Employee Updated Successfully')
      fetchEmployee()
     })
     .catch((err)=>{
@@ -68,7 +81,8 @@ export const Employee = () => {
   const deletetEmployee=(id)=>{
     axios.delete(`https://67a4618231d0d3a6b7862340.mockapi.io/employee/${id}`)
     .then((res)=>{
-      toast.success("Employee Deleted successfully")
+      // toast.success("Employee Deleted successfully")
+      success('success','Employee Deleted Successfully');
       fetchEmployee()
         })
     .catch((err)=>{
@@ -101,7 +115,8 @@ export const Employee = () => {
   const addEmployee=(emp)=>{
     axios.post(`https://67a4618231d0d3a6b7862340.mockapi.io/employee/`,emp)
     .then((res)=>{
-      toast.success("Employee Added Successfully")
+      // toast.success("Employee Added Successfully")
+      success('success','Employee Added Successfully');
       fetchEmployee()
       setEmpAdd({})
     })
@@ -119,9 +134,15 @@ export const Employee = () => {
     addEmployee(empAdd);
   }
 
+  const [form] = Form.useForm();
+  const nameValue = Form.useWatch('name', form);
+  // The selector is static and does not support closures.
+  const customValue = Form.useWatch((values) => `name: ${values.name || ''}`, form);
+
 
   return (
     <div className='mx-4'>
+    {contextHolder}
     <ToastContainer position='top-center' hideProgressBar={true} autoClose={2000} closeButton={false}/>
     <div className="container mt-5">
 
