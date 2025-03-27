@@ -41,6 +41,14 @@ export const Employee = () => {
     profileImage:''
   })
 
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  const sortedEmployees = [...employee].sort((a, b) => {
+    return sortOrder === "asc"
+      ? a.employeeName.localeCompare(b.employeeName)
+      : b.employeeName.localeCompare(a.employeeName);
+  });
+
   useEffect(()=>{
     fetchEmployee();
   },[])
@@ -115,7 +123,6 @@ export const Employee = () => {
   const addEmployee=(emp)=>{
     axios.post(`https://67a4618231d0d3a6b7862340.mockapi.io/employee/`,emp)
     .then((res)=>{
-      // toast.success("Employee Added Successfully")
       success('success','Employee Added Successfully');
       fetchEmployee()
       setEmpAdd({})
@@ -144,12 +151,27 @@ export const Employee = () => {
     <div className='mx-4'>
     {contextHolder}
     <ToastContainer position='top-center' hideProgressBar={true} autoClose={2000} closeButton={false}/>
+
+    <section className='mt-3 d-flex justify-content-between align-items-center'>
+      <div>
+        <select name="" id="" className='border-0 outline-0' onChange={(e) => setSortOrder(e.target.value)}>
+          <option value="asc">Sort By Name</option>
+          <option value="asc">A-Z</option>
+          <option value="desc">Z-A</option>
+        </select>
+      </div>
+
+      <div className='p-2 border bg-light'>
+        Total Employee {employee.length}
+        </div>
+    </section>
+
     <div className="container mt-5">
 
   <div className="row g-5">
 
       {
-      employee.filter((emp) => 
+      sortedEmployees.filter((emp) => 
         emp.employeeName.toLowerCase().startsWith(searchResult.toLowerCase())
       ||emp.employeeName.startsWith(searchResult.toUpperCase())
       ||emp.role.toLowerCase().startsWith(searchResult.toLowerCase())
