@@ -1,0 +1,89 @@
+/* Polished employee styles: theme vars, gradient headers, avatar fallback */
+.root{
+  --accent-1: linear-gradient(135deg,#6a11cb 0%,#2575fc 100%);
+  --muted: #6c757d;
+  --card-bg: #ffffff;
+  --card-border: rgba(16,24,40,0.06);
+}
+
+.employee-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.emp-card{
+  border-radius: 12px;
+  background: var(--card-bg);
+  transition: transform 0.22s cubic-bezier(.2,.9,.3,1), box-shadow 0.22s;
+  border: 1px solid var(--card-border);
+  overflow: hidden;
+}
+.emp-card:hover{
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 12px 30px rgba(16,24,40,0.08);
+}
+
+.emp-header{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:12px 16px;
+  background: var(--accent-1);
+  color: #fff;
+}
+.profile-img{
+  width:64px;
+  height:64px;
+  object-fit:cover;
+  flex-shrink:0;
+  border: 3px solid rgba(255,255,255,0.18);
+}
+.profile-placeholder{
+  width:64px;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+  font-weight:700;
+  font-size:18px;
+}
+
+.emp-meta .small{ color:rgba(255,255,255,0.9) }
+
+/* Ensure header title inherits/overrides other styles so name is visible */
+.emp-header .card-title { color: #000 !important; margin:0; font-weight:600 }
+.emp-header .emp-meta { color: rgba(255,255,255,0.9) !important }
+
+.card-body{ padding:14px 16px; background: #fbfcff }
+.card-body .card-title{ margin:0 }
+
+.action-btns button{ margin-left:8px }
+
+.controls{ padding:6px 0 }
+.controls .search-input{ min-width:220px }
+
+.add-fab{ 
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  font-size:24px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow: 0 10px 26px rgba(16,24,40,0.12);
+  border:none;
+}
+
+@media (max-width: 576px){
+  .controls{ gap:8px }
+  .controls .control-right{ width:100%; display:flex; justify-content:flex-end }
+  .controls .total{ display:none }
+  .employee-grid{ gap:12px }
+}

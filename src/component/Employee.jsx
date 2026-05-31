@@ -9,6 +9,7 @@ import { MdOutlineMarkEmailRead } from "react-icons/md";
 import { DatePicker } from 'antd';
 import { Alert, Form, Input } from 'antd';
 import { message } from "antd"
+import './Employee.css'
 // import { Button, message, Space } from 'antd';
 ;
 export const Employee = () => {
@@ -42,6 +43,8 @@ export const Employee = () => {
   })
 
   const [sortOrder, setSortOrder] = useState("asc");
+  const [localSearch, setLocalSearch] = useState('');
+  const [view, setView] = useState('grid');
 
   const sortedEmployees = [...employee].sort((a, b) => {
     return sortOrder === "asc"
@@ -152,48 +155,58 @@ export const Employee = () => {
     {contextHolder}
     <ToastContainer position='top-center' hideProgressBar={true} autoClose={2000} closeButton={false}/>
 
-    <section className='mt-3 d-flex justify-content-between align-items-center'>
-      <div>
-        <select name="" id="" className='border-0 outline-0' onChange={(e) => setSortOrder(e.target.value)}>
-          <option value="asc">Sort By Name</option>
-          <option value="asc">A-Z</option>
-          <option value="desc">Z-A</option>
-        </select>
+    <section className='controls mt-3 d-flex flex-wrap justify-content-between align-items-center'>
+      <div className='d-flex align-items-center gap-3'>
+        <div>
+          <h3 className='mb-0'>Employee Directory</h3>
+          <div className='text-muted small'>Manage team members with ease</div>
+        </div>
       </div>
 
-      <div className='p-2 border bg-light'>
-        Total Employee {employee.length}
-        </div>
+      <div className='d-flex gap-2 align-items-center control-actions'>
+        <input value={localSearch} onChange={(e)=>setLocalSearch(e.target.value)} placeholder='Search by name, role or address' className='form-control form-control-sm search-input'/>
+        <select onChange={(e) => setSortOrder(e.target.value)} className='form-select form-select-sm'>
+          <option value="asc">Sort: A-Z</option>
+          <option value="desc">Sort: Z-A</option>
+        </select>
+        <button className='btn btn-primary btn-sm d-none d-md-inline' data-bs-toggle="modal" data-bs-target="#exampleModal">Add</button>
+      </div>
     </section>
 
     <div className="container mt-5">
 
-  <div className="row g-5">
+  <div className="employee-grid">
 
       {
-      sortedEmployees.filter((emp) => 
-        emp.employeeName.toLowerCase().startsWith(searchResult.toLowerCase())
-      ||emp.employeeName.startsWith(searchResult.toUpperCase())
-      ||emp.role.toLowerCase().startsWith(searchResult.toLowerCase())
-      ||emp.role.startsWith(searchResult.toUpperCase())
-      ||emp.employeeAddress.toLowerCase().startsWith(searchResult.toLowerCase())
-      ||emp.employeeAddress.startsWith(searchResult.toUpperCase())
-    ).map((emp,index)=>(
-      <div className="col-sm-6 col-md-4 col-lg-3 col-lg-3 p-2 shadow-xl" key={index}> 
-      <div className="card p-2 pt-3">
-      <div className='d-flex gap-3'>
-      <img src={emp.profileImage} style={{ height: '60px', width: '60px' }} className="card-img-top rounded-circle" alt="..."/>
-      <div>
-      <h5 className="card-title fs-6">{emp.employeeName}</h5>
-      <h5 className="card-title fs-6">{emp.role}</h5>
+      sortedEmployees.filter((emp) => {
+        const query = (localSearch || searchResult || '').toString().toLowerCase().trim();
+        if(!query) return true;
+        const name = (emp.employeeName||'').toLowerCase();
+        const role = (emp.role||'').toLowerCase();
+        const addr = (emp.employeeAddress||'').toLowerCase();
+        return name.includes(query) || role.includes(query) || addr.includes(query);
+      }).map((emp,index)=>(
+      <div className="emp-col p-2" key={index}> 
+      <div className="emp-card card p-2 pt-3 shadow-sm">
+      <div className='emp-header d-flex gap-3'>
+      {emp.profileImage ? (
+        <img src={emp.profileImage} className="profile-img rounded-circle" alt={emp.employeeName} />
+      ) : (
+        <div className='profile-placeholder rounded-circle'>
+          {((emp.employeeName||'').split(' ').map(n=>n[0]).slice(0,2).join('')||'').toUpperCase()}
+        </div>
+      )}
+      <div className='emp-meta'>
+      <h5 className="card-title fs-6 mb-1">{emp.employeeName}</h5>
+      <div className='text-muted small'>{emp.role}</div>
       </div>
       </div>
-      <div className="card-body">
-        <div className='mb-2 d-flex gap-2'><MdOutlineMarkEmailRead className='d-inline'/><h5 className="card-title fs-6 d-inline"> {emp.employeeEmail}</h5></div>
-        <div className='d-flex gap-2'><ImLocation className='d-inline'/><p className="card-title fs-6 d-inline">{emp.employeeAddress}</p></div>
-        <div className='d-flex gap-2 flex-end justify-content-end'>
-        <button onClick={()=>handelUpdate(emp.id)}  type="button" className="btn btn-primary p-1"  data-bs-toggle="modal" data-bs-target="#exampleModal2" data-bs-whatever="@mdo"><CiEdit /></button>
-        <button onClick={()=>handelDelete(emp.id)} type="button" className="btn btn-danger p-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><MdOutlineDelete /></button>
+      <div className="card-body p-2">
+        <div className='mb-2 d-flex gap-2 align-items-center'><MdOutlineMarkEmailRead className='d-inline'/><h5 className="card-title fs-6 d-inline"> {emp.employeeEmail}</h5></div>
+        <div className='d-flex gap-2 align-items-start'><ImLocation className='d-inline'/><p className="card-title fs-6 d-inline mb-0">{emp.employeeAddress}</p></div>
+        <div className='d-flex gap-2 flex-end justify-content-end mt-2 action-btns'>
+        <button onClick={()=>handelUpdate(emp.id)}  type="button" className="btn btn-sm btn-primary"  data-bs-toggle="modal" data-bs-target="#exampleModal2" data-bs-whatever="@mdo"><CiEdit /></button>
+        <button onClick={()=>handelDelete(emp.id)} type="button" className="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><MdOutlineDelete /></button>
         </div>
         </div>
         </div>
@@ -246,6 +259,9 @@ export const Employee = () => {
         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" onClick={handelUpdateButton} data-bs-dismiss="modal" className="btn btn-primary">Update</button>
       </div>
+
+      {/* Floating Add Button for small screens */}
+      <button className="add-fab btn btn-primary d-md-none" data-bs-toggle="modal" data-bs-target="#exampleModal">+</button>
 
     </div>
   </div>
